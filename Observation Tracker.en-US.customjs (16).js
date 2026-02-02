@@ -175,7 +175,7 @@ async function loadObservationDetails(observationId) {
 async function loadLatestClientUpdate(observationId) {
     try {
         const response = await fetch(
-            `${CONFIG.CLIENT_UPDATES_ENDPOINT}?$filter=_cr650_observation_value eq ${observationId}&$orderby=cr650_submitteddate desc&$top=1`,
+            `${CONFIG.CLIENT_UPDATES_ENDPOINT}?$filter=_cr650_observation_value eq '${observationId}'&$orderby=cr650_submitteddate desc&$top=1`,
             {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
@@ -198,7 +198,7 @@ async function loadLatestClientUpdate(observationId) {
 async function loadObservationHistory(observationId) {
     try {
         const clientUpdatesResponse = await fetch(
-            `${CONFIG.CLIENT_UPDATES_ENDPOINT}?$filter=_cr650_observation_value eq ${observationId}&$orderby=cr650_submitteddate desc`,
+            `${CONFIG.CLIENT_UPDATES_ENDPOINT}?$filter=_cr650_observation_value eq '${observationId}'&$orderby=cr650_submitteddate desc`,
             {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
@@ -255,7 +255,7 @@ async function loadObservationHistory(observationId) {
 
 async function loadObservationDocuments(observationId) {
 
-    const url = `/_api/cr650_ia_documentses?$filter=_cr650_observation_value eq ${observationId}`;
+    const url = `/_api/cr650_ia_documentses?$filter=_cr650_observation_value eq '${observationId}'`;
 
     const response = await fetch(url, {
         method: 'GET',

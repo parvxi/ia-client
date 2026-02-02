@@ -611,7 +611,7 @@ async function loadPreviousSubmissions(observationId) {
     try {
         console.log('📜 Loading previous submissions...');
         const response = await apiGet(
-            `${CONFIG.UPDATES_API}?$filter=_cr650_observation_value eq ${observationId}&$orderby=cr650_submitteddate desc`
+            `${CONFIG.UPDATES_API}?$filter=_cr650_observation_value eq '${observationId}'&$orderby=cr650_submitteddate desc`
         );
 
         const submissions = response.value || [];
