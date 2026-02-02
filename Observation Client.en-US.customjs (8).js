@@ -346,7 +346,7 @@ function renderFileList() {
                 <div class="file-name">${file.name}</div>
                 <div class="file-size">${formatFileSize(file.size)}</div>
             </div>
-            <button type="button" class="file-remove" onclick="removeFile('${file.name}')">
+            <button type="button" class="file-remove" data-action="remove-file" data-filename="${file.name}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"/>
                     <line x1="6" y1="6" x2="18" y2="18"/>
@@ -388,9 +388,18 @@ function setupFileUpload() {
         const files = Array.from(e.dataTransfer.files);
         files.forEach(file => addFileToList(file));
     });
-}
 
-window.removeFile = removeFile;
+    // Event delegation for remove file buttons (CSP compliant)
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('[data-action="remove-file"]');
+        if (target) {
+            const filename = target.dataset.filename;
+            if (filename) {
+                removeFile(filename);
+            }
+        }
+    });
+}
 
 // =============================================
 // RENDER OBSERVATION

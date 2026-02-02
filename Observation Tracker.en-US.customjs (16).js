@@ -1911,6 +1911,20 @@ async function acceptClientResponse(observationId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
+        // Also update the client update record with accepted status
+        if (AppState.latestClientUpdate?.cr650_iaclientupdateid) {
+            await safeFetch(
+                `${CONFIG.CLIENT_UPDATES_ENDPOINT}(${AppState.latestClientUpdate.cr650_iaclientupdateid})`,
+                {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        'cr650_updatestatus': 2 // 2 = Accepted
+                    })
+                }
+            );
+        }
+
         alert(
             '✅ SUCCESS\n\n' +
             'Observation has been CLOSED.\n\n' +
