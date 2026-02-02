@@ -552,12 +552,9 @@ async function handleSubmit(e) {
             }
         }
 
-        // Step 3: Update observation status
-        console.log('Updating observation status...');
-        await apiPatch(`${CONFIG.OBSERVATIONS_API}(${observationId})`, {
-            'cr650_status': 3
-        });
-        console.log('✅ Observation status updated');
+        // Note: Status is NOT changed here - only auditor can accept/close observations
+        // The client update record has been created, auditor will review and decide
+        console.log('✅ Client update submitted - awaiting auditor review');
 
         hideElement('mainContent');
         showElement('successMessage');
@@ -605,6 +602,104 @@ function showError(message) {
     }
 
     showElement('errorScreen');
+}
+
+// =============================================
+// PREVIOUS SUBMISSIONS HISTORY
+// =============================================
+async function loadPreviousSubmissions(observationId) {
+    try {
+        console.log('📜 Loading previous submissions...');
+        const response = await apiGet(
+            `${CONFIG.UPDATES_API}?$filter=_cr650_observation_value eq ${observationId}&$orderby=cr650_submitteddate desc`
+        );
+
+        const submissions = response.value || [];
+        console.log(`✅ Found ${submissions.length} previous submission(s)`);
+
+        if (submissions.length > 0) {
+            renderPreviousSubmissions(submissions);
+        }
+    } catch (error) {
+        console.warn('Could not load previous submissions:', error);
+    }
+}
+
+function renderPreviousSubmissions(submissions) {
+    // Find the form container to insert history before it
+    const formContainer = document.querySelector('.update-form-section, .form-section, #clientUpdateForm');
+    if (!formContainer) {
+        console.warn('Could not find form container for submission history');
+        return;
+    }
+
+    const historySection = document.createElement('div');
+    historySection.className = 'submission-history-section';
+    historySection.style.cssText = 'margin-bottom: 32px; padding: 24px; background: #F9FAFB; border-radius: 12px; border: 1px solid #E5E7EB;';
+
+    historySection.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+            <div style="width: 40px; height: 40px; background: #EEF2FF; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F2937;">Previous Submissions</h3>
+                <p style="margin: 0; font-size: 14px; color: #6B7280;">Your submission history for this observation</p>
+            </div>
+        </div>
+
+        <div class="submissions-timeline">
+            ${submissions.map((sub, index) => `
+                <div class="submission-item" style="
+                    padding: 16px;
+                    background: white;
+                    border-radius: 8px;
+                    margin-bottom: ${index < submissions.length - 1 ? '12px' : '0'};
+                    border-left: 3px solid ${index === 0 ? '#6366F1' : '#D1D5DB'};
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-weight: 500; color: #374151;">
+                            ${index === 0 ? 'Latest Submission' : `Submission #${submissions.length - index}`}
+                        </span>
+                        <span style="font-size: 13px; color: #6B7280;">
+                            ${formatDate(sub.cr650_submitteddate)}
+                        </span>
+                    </div>
+                    ${sub.cr650_revisedmanagementfeedback ? `
+                        <div style="margin-bottom: 8px;">
+                            <span style="font-size: 12px; color: #6B7280; display: block; margin-bottom: 4px;">Revised Feedback:</span>
+                            <p style="margin: 0; color: #4B5563; font-size: 14px; line-height: 1.5;">${escapeHtmlSimple(truncateText(sub.cr650_revisedmanagementfeedback, 200))}</p>
+                        </div>
+                    ` : ''}
+                    ${sub.cr650_revisedduedate ? `
+                        <div style="font-size: 13px; color: #6B7280;">
+                            Requested Due Date: <strong style="color: #374151;">${formatDate(sub.cr650_revisedduedate)}</strong>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    formContainer.parentNode.insertBefore(historySection, formContainer);
+}
+
+function escapeHtmlSimple(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function truncateText(text, maxLength) {
+    if (!text || text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
 }
 
 // =============================================
@@ -657,8 +752,34 @@ async function initialize() {
         console.log('✅ Observation loaded:', observationData);
         console.log('📝 Resolved GUID:', observationId);
 
+        // Access validation - check if user email matches observation
+        const userEmailParam = getUrlParam('email');
+        if (userEmailParam && observationData.cr650_email) {
+            const normalizedUserEmail = userEmailParam.toLowerCase().trim();
+            const normalizedObsEmail = observationData.cr650_email.toLowerCase().trim();
+
+            if (normalizedUserEmail !== normalizedObsEmail) {
+                console.warn('⚠️ Email mismatch - access denied');
+                hideLoadingScreen();
+                showAccessDenied();
+                return;
+            }
+            console.log('✅ Email validation passed');
+        }
+
+        // Check if observation is already closed
+        if (observationData.cr650_status === 3) {
+            console.log('🔒 Observation is closed - showing read-only view');
+            hideLoadingScreen();
+            showClosedMessage(observationData);
+            return;
+        }
+
         console.log('🎨 Rendering observation...');
         renderObservation(observationData);
+
+        // Load and display previous submissions
+        await loadPreviousSubmissions(observationId);
 
         console.log('⚙️ Setting up form...');
         setupForm();
@@ -677,6 +798,104 @@ async function initialize() {
                 : 'Unable to load the observation. Please check the link or contact the Internal Audit team.'
         );
     }
+}
+
+/**
+ * Show read-only closed message when observation is already closed
+ */
+function showClosedMessage(obs) {
+    const main = document.getElementById('mainContent');
+    if (!main) return;
+
+    const risk = CONFIG.RISK_RATINGS[obs.cr650_riskrating] || CONFIG.RISK_RATINGS[3];
+
+    main.innerHTML = `
+        <div class="closed-observation-notice" style="max-width: 800px; margin: 40px auto; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <h2 style="color: #1F2937; font-size: 24px; margin-bottom: 10px;">Observation Closed</h2>
+                <p style="color: #6B7280; font-size: 16px;">This observation has been reviewed and closed by the Internal Audit team.</p>
+            </div>
+
+            <div style="background: #F9FAFB; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <span style="font-weight: 600; color: #374151;">Audit</span>
+                    <span style="color: #6B7280;">${escapeHtml(obs.cr650_auditname || '-')}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <span style="font-weight: 600; color: #374151;">Risk Rating</span>
+                    <span class="card-badge ${risk.class}" style="padding: 4px 12px; border-radius: 20px; font-size: 12px;">${risk.text}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <span style="font-weight: 600; color: #374151;">Date Closed</span>
+                    <span style="color: #6B7280;">${formatDate(obs.cr650_dateclosed)}</span>
+                </div>
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+                    <span style="font-weight: 600; color: #374151; display: block; margin-bottom: 8px;">Observation</span>
+                    <p style="color: #6B7280; line-height: 1.6;">${escapeHtml(obs.cr650_observation || '-')}</p>
+                </div>
+                ${obs.cr650_closingremarks ? `
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+                    <span style="font-weight: 600; color: #374151; display: block; margin-bottom: 8px;">Closing Remarks</span>
+                    <p style="color: #6B7280; line-height: 1.6;">${escapeHtml(obs.cr650_closingremarks)}</p>
+                </div>
+                ` : ''}
+            </div>
+
+            <div style="text-align: center;">
+                <a href="/Client-Observation-Dashboard/?email=${encodeURIComponent(obs.cr650_email || '')}"
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #3B82F6; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    `;
+
+    forceShowMainContent();
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Show access denied message when email doesn't match
+ */
+function showAccessDenied() {
+    const main = document.getElementById('mainContent');
+    if (!main) return;
+
+    main.innerHTML = `
+        <div class="access-denied-notice" style="max-width: 600px; margin: 40px auto; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center;">
+            <div style="width: 80px; height: 80px; background: #FEE2E2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                </svg>
+            </div>
+            <h2 style="color: #1F2937; font-size: 24px; margin-bottom: 10px;">Access Denied</h2>
+            <p style="color: #6B7280; font-size: 16px; margin-bottom: 30px;">
+                You don't have permission to access this observation.<br>
+                Please use the link sent to your email address.
+            </p>
+            <p style="color: #9CA3AF; font-size: 14px;">
+                If you believe this is an error, please contact the Internal Audit team.
+            </p>
+        </div>
+    `;
+
+    forceShowMainContent();
 }
 
 // =============================================

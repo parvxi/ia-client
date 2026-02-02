@@ -1015,11 +1015,11 @@ function renderCompleteFormFields(obs, mode, today, currentYear) {
                     </svg>
                 </div>
                 <div>
-                    <h3 class="section-title">Latest Client Update</h3>
-                    <p class="section-subtitle">Most recent submission from client (read-only)</p>
+                    <h3 class="section-title">Pending Client Response</h3>
+                    <p class="section-subtitle">Review and accept or reject the client's submission</p>
                 </div>
             </div>
-            
+
             <div class="client-update-card">
                 <div class="form-group">
                     <label class="form-label">Revised Management Feedback</label>
@@ -1039,6 +1039,29 @@ function renderCompleteFormFields(obs, mode, today, currentYear) {
                     <label class="form-label">Client Comments</label>
                     <div class="readonly-field">${escapeHtml(AppState.latestClientUpdate.cr650_clientcomments || '-')}</div>
                 </div>
+
+                <!-- Accept/Reject Actions (only show if observation is not already Closed) -->
+                ${obs.cr650_status !== 3 ? `
+                <div class="client-response-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: flex; gap: 12px;">
+                    <button type="button" class="btn btn-success" onclick="acceptClientResponse('${obs.cr650_ia_observationid}')" style="background: #10B981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Accept & Close
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="rejectClientResponse('${obs.cr650_ia_observationid}')" style="background: #F59E0B; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                        Reject & Send Back
+                    </button>
+                </div>
+                ` : `
+                <div style="margin-top: 20px; padding: 12px; background: #D1FAE5; border-radius: 8px; color: #065F46;">
+                    This observation has been closed.
+                </div>
+                `}
             </div>
         </div>
         ` : ''}
@@ -1814,6 +1837,129 @@ function generateRiskSelector(selectedRisk) {
 }
 
 // ================================
+// CLIENT RESPONSE ACCEPT/REJECT
+// ================================
+
+/**
+ * Accept client response and close the observation
+ * - Sets status to Closed (3)
+ * - Sets date closed to today
+ * - Prompts for closing remarks
+ */
+async function acceptClientResponse(observationId) {
+    const closingRemarks = prompt('Enter closing remarks for this observation:');
+    if (closingRemarks === null) return; // User cancelled
+
+    if (!closingRemarks.trim()) {
+        alert('Closing remarks are required when accepting a client response.');
+        return;
+    }
+
+    try {
+        const today = new Date().toISOString();
+
+        const updateData = {
+            'cr650_status': 3, // Closed
+            'cr650_dateclosed': today,
+            'cr650_closingremarks': closingRemarks,
+            'cr650_aging': 1 // Not due (closed observations)
+        };
+
+        // If there's a revised due date from the client, apply it
+        if (AppState.latestClientUpdate?.cr650_revisedduedate) {
+            updateData.cr650_duedate = AppState.latestClientUpdate.cr650_revisedduedate;
+        }
+
+        // If there's revised management feedback, update the Latest Revised MAP
+        if (AppState.latestClientUpdate?.cr650_revisedmanagementfeedback) {
+            updateData.cr650_latestrevisedmap = AppState.latestClientUpdate.cr650_revisedmanagementfeedback;
+        }
+
+        const response = await safeFetch(
+            `${CONFIG.DATAVERSE_ENDPOINT}(${observationId})`,
+            {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        alert('Client response accepted. Observation has been closed.');
+        closePanel();
+        await loadObservations();
+
+    } catch (error) {
+        console.error('Error accepting client response:', error);
+        alert('Failed to accept client response. Please try again.');
+    }
+}
+
+/**
+ * Reject client response and send back to client
+ * - Keeps/sets status to In Progress (1)
+ * - Client must revise and resubmit
+ */
+async function rejectClientResponse(observationId) {
+    const reason = prompt('Enter reason for rejection (this will be added to IA Work notes):');
+    if (reason === null) return; // User cancelled
+
+    if (!reason.trim()) {
+        alert('Please provide a reason for rejection.');
+        return;
+    }
+
+    try {
+        const today = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        // Build the rejection note
+        const rejectionNote = `[${today}] Client response rejected: ${reason}`;
+
+        // Append to existing IA Work notes
+        let iaWork = AppState.currentObservation?.cr650_iawork || '';
+        if (iaWork) {
+            iaWork = iaWork + '\n\n' + rejectionNote;
+        } else {
+            iaWork = rejectionNote;
+        }
+
+        const updateData = {
+            'cr650_status': 1, // In Progress
+            'cr650_iawork': iaWork,
+            'cr650_lastcommunicationdate': new Date().toISOString()
+        };
+
+        const response = await safeFetch(
+            `${CONFIG.DATAVERSE_ENDPOINT}(${observationId})`,
+            {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        alert('Client response rejected. The observation remains In Progress and the client will need to revise their submission.');
+        closePanel();
+        await loadObservations();
+
+    } catch (error) {
+        console.error('Error rejecting client response:', error);
+        alert('Failed to reject client response. Please try again.');
+    }
+}
+
+// ================================
 // EVENT LISTENERS
 // ================================
 
@@ -1940,3 +2086,5 @@ window.saveObservation = saveObservation;
 window.deleteObservation = deleteObservation;
 window.calculateDaysOverdue = calculateDaysOverdue;
 window.toggleClosureFields = toggleClosureFields;
+window.acceptClientResponse = acceptClientResponse;
+window.rejectClientResponse = rejectClientResponse;
