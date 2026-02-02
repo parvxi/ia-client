@@ -633,54 +633,86 @@ function renderPreviousSubmissions(submissions) {
         return;
     }
 
+    // Check if latest submission was rejected - show prominent alert
+    const latestSub = submissions[0];
+    const isLatestRejected = latestSub && latestSub.cr650_updatestatus === 3;
+
     const historySection = document.createElement('div');
     historySection.className = 'submission-history-section';
-    historySection.style.cssText = 'margin-bottom: 32px; padding: 24px; background: #F9FAFB; border-radius: 12px; border: 1px solid #E5E7EB;';
+    historySection.style.cssText = 'margin-bottom: 32px;';
+
+    // Build rejection alert if needed
+    let rejectionAlert = '';
+    if (isLatestRejected) {
+        rejectionAlert = `
+            <div style="background: #FEF2F2; border: 2px solid #FECACA; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: #FEE2E2; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #DC2626;">Your Response Was Rejected</h3>
+                        <p style="margin: 0 0 12px 0; font-size: 14px; color: #991B1B;">The Internal Audit team has reviewed your submission and requires revisions.</p>
+                        ${latestSub.cr650_auditorfeedback ? `
+                            <div style="background: white; border-radius: 8px; padding: 12px; border: 1px solid #FECACA;">
+                                <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #DC2626;">AUDITOR FEEDBACK:</p>
+                                <p style="margin: 0; font-size: 14px; color: #374151; line-height: 1.6;">${escapeHtmlSimple(latestSub.cr650_auditorfeedback)}</p>
+                            </div>
+                        ` : ''}
+                        <p style="margin: 12px 0 0 0; font-size: 13px; color: #6B7280;">Please address the feedback above and submit a revised response using the form below.</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
     historySection.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-            <div style="width: 40px; height: 40px; background: #EEF2FF; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-            </div>
-            <div>
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F2937;">Previous Submissions</h3>
-                <p style="margin: 0; font-size: 14px; color: #6B7280;">Your submission history for this observation</p>
-            </div>
-        </div>
-
-        <div class="submissions-timeline">
-            ${submissions.map((sub, index) => `
-                <div class="submission-item" style="
-                    padding: 16px;
-                    background: white;
-                    border-radius: 8px;
-                    margin-bottom: ${index < submissions.length - 1 ? '12px' : '0'};
-                    border-left: 3px solid ${index === 0 ? '#6366F1' : '#D1D5DB'};
-                ">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-weight: 500; color: #374151;">
-                            ${index === 0 ? 'Latest Submission' : `Submission #${submissions.length - index}`}
-                        </span>
-                        <span style="font-size: 13px; color: #6B7280;">
-                            ${formatDate(sub.cr650_submitteddate)}
-                        </span>
-                    </div>
-                    ${sub.cr650_revisedmanagementfeedback ? `
-                        <div style="margin-bottom: 8px;">
-                            <span style="font-size: 12px; color: #6B7280; display: block; margin-bottom: 4px;">Revised Feedback:</span>
-                            <p style="margin: 0; color: #4B5563; font-size: 14px; line-height: 1.5;">${escapeHtmlSimple(truncateText(sub.cr650_revisedmanagementfeedback, 200))}</p>
-                        </div>
-                    ` : ''}
-                    ${sub.cr650_revisedduedate ? `
-                        <div style="font-size: 13px; color: #6B7280;">
-                            Requested Due Date: <strong style="color: #374151;">${formatDate(sub.cr650_revisedduedate)}</strong>
-                        </div>
-                    ` : ''}
+        ${rejectionAlert}
+        <div style="padding: 24px; background: #F9FAFB; border-radius: 12px; border: 1px solid #E5E7EB;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div style="width: 40px; height: 40px; background: #EEF2FF; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
                 </div>
-            `).join('')}
+                <div>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1F2937;">Previous Submissions</h3>
+                    <p style="margin: 0; font-size: 14px; color: #6B7280;">Your submission history for this observation</p>
+                </div>
+            </div>
+
+            <div class="submissions-timeline">
+                ${submissions.map((sub, index) => {
+                    const isRejected = sub.cr650_updatestatus === 3;
+                    const isAccepted = sub.cr650_updatestatus === 2;
+                    const borderColor = isRejected ? '#EF4444' : (isAccepted ? '#10B981' : (index === 0 ? '#6366F1' : '#D1D5DB'));
+
+                    return '<div class="submission-item" style="padding: 16px; background: white; border-radius: 8px; margin-bottom: ' + (index < submissions.length - 1 ? '12px' : '0') + '; border-left: 3px solid ' + borderColor + ';">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+                            '<span style="font-weight: 500; color: #374151;">' +
+                                (index === 0 ? 'Latest Submission' : 'Submission #' + (submissions.length - index)) +
+                                (isRejected ? ' <span style="background: #EF4444; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">REJECTED</span>' : '') +
+                                (isAccepted ? ' <span style="background: #10B981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">ACCEPTED</span>' : '') +
+                            '</span>' +
+                            '<span style="font-size: 13px; color: #6B7280;">' + formatDate(sub.cr650_submitteddate) + '</span>' +
+                        '</div>' +
+                        (sub.cr650_revisedmanagementfeedback ?
+                            '<div style="margin-bottom: 8px;">' +
+                                '<span style="font-size: 12px; color: #6B7280; display: block; margin-bottom: 4px;">Your Feedback:</span>' +
+                                '<p style="margin: 0; color: #4B5563; font-size: 14px; line-height: 1.5;">' + escapeHtmlSimple(truncateText(sub.cr650_revisedmanagementfeedback, 200)) + '</p>' +
+                            '</div>'
+                        : '') +
+                        (sub.cr650_revisedduedate ?
+                            '<div style="font-size: 13px; color: #6B7280;">Requested Due Date: <strong style="color: #374151;">' + formatDate(sub.cr650_revisedduedate) + '</strong></div>'
+                        : '') +
+                    '</div>';
+                }).join('')}
+            </div>
         </div>
     `;
 

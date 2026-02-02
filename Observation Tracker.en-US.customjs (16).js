@@ -1984,6 +1984,7 @@ async function rejectClientResponse(observationId) {
             'cr650_lastcommunicationdate': new Date().toISOString()
         };
 
+        // Update the observation
         const response = await safeFetch(
             `${CONFIG.DATAVERSE_ENDPOINT}(${observationId})`,
             {
@@ -1995,6 +1996,21 @@ async function rejectClientResponse(observationId) {
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Also update the client update record with rejection status and feedback
+        if (AppState.latestClientUpdate?.cr650_iaclientupdateid) {
+            await safeFetch(
+                `${CONFIG.CLIENT_UPDATES_ENDPOINT}(${AppState.latestClientUpdate.cr650_iaclientupdateid})`,
+                {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        'cr650_updatestatus': 3, // 3 = Rejected
+                        'cr650_auditorfeedback': reason
+                    })
+                }
+            );
         }
 
         alert(
