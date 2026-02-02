@@ -1043,13 +1043,13 @@ function renderCompleteFormFields(obs, mode, today, currentYear) {
                 <!-- Accept/Reject Actions (only show if observation is not already Closed) -->
                 ${obs.cr650_status !== 3 ? `
                 <div class="client-response-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: flex; gap: 12px;">
-                    <button type="button" class="btn btn-success" onclick="acceptClientResponse('${obs.cr650_ia_observationid}')" style="background: #10B981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                    <button type="button" class="btn btn-success btn-accept-response" data-action="accept-response" data-observation-id="${obs.cr650_ia_observationid}" style="background: #10B981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"/>
                         </svg>
                         Accept & Close
                     </button>
-                    <button type="button" class="btn btn-warning" onclick="rejectClientResponse('${obs.cr650_ia_observationid}')" style="background: #F59E0B; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                    <button type="button" class="btn btn-warning btn-reject-response" data-action="reject-response" data-observation-id="${obs.cr650_ia_observationid}" style="background: #F59E0B; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                             <path d="M3 3v5h5"/>
@@ -2053,11 +2053,16 @@ function initializeEventListeners() {
         if (!target) return;
 
         const action = target.dataset.action;
+        const observationId = target.dataset.observationId;
 
         if (action === 'create-first') {
             openPanel('create');
         } else if (action === 'retry-load') {
             loadObservations();
+        } else if (action === 'accept-response' && observationId) {
+            acceptClientResponse(observationId);
+        } else if (action === 'reject-response' && observationId) {
+            rejectClientResponse(observationId);
         }
     });
 
