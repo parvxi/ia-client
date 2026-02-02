@@ -514,7 +514,7 @@ function renderCreateForm() {
                     <h2 class="panel-title">Create New Observation</h2>
                     <p class="panel-subtitle">Complete all required fields to create a comprehensive audit observation record</p>
                 </div>
-                <button class="btn-icon-lg" onclick="closePanel()" title="Close panel">
+                <button class="btn-icon-lg" data-action="close-panel" title="Close panel">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6 6 18" />
@@ -541,9 +541,9 @@ function renderCreateForm() {
             </div>
 
             <div class="panel-footer">
-                <button type="button" class="btn btn-ghost" onclick="closePanel()">Cancel</button>
+                <button type="button" class="btn btn-ghost" data-action="close-panel">Cancel</button>
                 <div class="footer-actions">
-                    <button type="button" class="btn btn-secondary" onclick="saveObservation(true)">
+                    <button type="button" class="btn btn-secondary" data-action="save-draft">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
@@ -552,7 +552,7 @@ function renderCreateForm() {
                         </svg>
                         Save as Draft
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="saveObservation(false)">
+                    <button type="button" class="btn btn-primary" data-action="save-observation">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m9 12 2 2 4-4" />
@@ -582,7 +582,7 @@ function renderDetailPanel(obs) {
                     <h2 class="panel-title">Edit Observation</h2>
                     <p class="panel-subtitle">ID: ${obs.cr650_name || obs.cr650_ia_observationid}</p>
                 </div>
-                <button class="btn-icon-lg" onclick="closePanel()" title="Close panel">
+                <button class="btn-icon-lg" data-action="close-panel" title="Close panel">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6 6 18" />
@@ -592,7 +592,7 @@ function renderDetailPanel(obs) {
             </div>
 
             <div class="panel-tabs">
-                <button class="tab-btn ${AppState.activeTab === 'edit' ? 'active' : ''}" onclick="switchTab('edit')">
+                <button class="tab-btn ${AppState.activeTab === 'edit' ? 'active' : ''}" data-action="switch-tab" data-tab="edit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -600,7 +600,7 @@ function renderDetailPanel(obs) {
                     </svg>
                     Edit Details
                 </button>
-                <button class="tab-btn ${AppState.activeTab === 'history' ? 'active' : ''}" onclick="switchTab('history')">
+                <button class="tab-btn ${AppState.activeTab === 'history' ? 'active' : ''}" data-action="switch-tab" data-tab="history">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -617,9 +617,9 @@ function renderDetailPanel(obs) {
             </div>
 
             <div class="panel-footer">
-                <button type="button" class="btn btn-ghost" onclick="closePanel()">Cancel</button>
+                <button type="button" class="btn btn-ghost" data-action="close-panel">Cancel</button>
                 <div class="footer-actions">
-                    <button type="button" class="btn btn-danger" onclick="deleteObservation('${obs.cr650_ia_observationid}')">
+                    <button type="button" class="btn btn-danger" data-action="delete-observation" data-observation-id="${obs.cr650_ia_observationid}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 6h18" />
@@ -628,7 +628,7 @@ function renderDetailPanel(obs) {
                         </svg>
                         Delete
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="saveObservation(false)">
+                    <button type="button" class="btn btn-primary" data-action="save-observation">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m9 12 2 2 4-4" />
@@ -882,10 +882,9 @@ function renderCompleteFormFields(obs, mode, today, currentYear) {
             <div class="form-row form-row-3">
                 <div class="form-group">
                     <label class="form-label required">Due Date</label>
-                    <input type="date" name="dueDate" class="form-control" 
-                        value="${obs.cr650_duedate ? obs.cr650_duedate.split('T')[0] : ''}" 
-                        required
-                        onchange="calculateDaysOverdue()" />
+                    <input type="date" name="dueDate" class="form-control"
+                        value="${obs.cr650_duedate ? obs.cr650_duedate.split('T')[0] : ''}"
+                        required />
                     <span class="field-hint">Target completion date</span>
                 </div>
                 <div class="form-group">
@@ -913,7 +912,7 @@ function renderCompleteFormFields(obs, mode, today, currentYear) {
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label required">Status</label>
-                    <select name="status" id="statusField" class="form-control" required onchange="toggleClosureFields()">
+                    <select name="status" id="statusField" class="form-control" required>
                         <option value="">Select Status</option>
                         <option value="1" ${obs.cr650_status === 1 ? 'selected' : ''}>In Progress</option>
                         <option value="2" ${obs.cr650_status === 2 ? 'selected' : ''}>Overdue</option>
@@ -1076,7 +1075,7 @@ function renderHistoryTab(obs) {
                     <h2 class="panel-title">Observation History</h2>
                     <p class="panel-subtitle">Complete activity timeline</p>
                 </div>
-                <button class="btn-icon-lg" onclick="closePanel()" title="Close panel">
+                <button class="btn-icon-lg" data-action="close-panel" title="Close panel">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6 6 18" />
@@ -1086,7 +1085,7 @@ function renderHistoryTab(obs) {
             </div>
 
             <div class="panel-tabs">
-                <button class="tab-btn" onclick="switchTab('edit')">
+                <button class="tab-btn" data-action="switch-tab" data-tab="edit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -1094,7 +1093,7 @@ function renderHistoryTab(obs) {
                     </svg>
                     Edit Details
                 </button>
-                <button class="tab-btn active" onclick="switchTab('history')">
+                <button class="tab-btn active" data-action="switch-tab" data-tab="history">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -1135,7 +1134,7 @@ function renderHistoryTab(obs) {
             </div>
 
             <div class="panel-footer">
-                <button type="button" class="btn btn-ghost" onclick="closePanel()">Close</button>
+                <button type="button" class="btn btn-ghost" data-action="close-panel">Close</button>
             </div>
         </div>
     `;
@@ -2049,20 +2048,41 @@ function initializeEventListeners() {
     });
 
     document.addEventListener('click', (e) => {
-        const target = e.target.closest('button[data-action]');
+        const target = e.target.closest('[data-action]');
         if (!target) return;
 
         const action = target.dataset.action;
         const observationId = target.dataset.observationId;
+        const tab = target.dataset.tab;
 
-        if (action === 'create-first') {
-            openPanel('create');
-        } else if (action === 'retry-load') {
-            loadObservations();
-        } else if (action === 'accept-response' && observationId) {
-            acceptClientResponse(observationId);
-        } else if (action === 'reject-response' && observationId) {
-            rejectClientResponse(observationId);
+        switch (action) {
+            case 'create-first':
+                openPanel('create');
+                break;
+            case 'retry-load':
+                loadObservations();
+                break;
+            case 'accept-response':
+                if (observationId) acceptClientResponse(observationId);
+                break;
+            case 'reject-response':
+                if (observationId) rejectClientResponse(observationId);
+                break;
+            case 'close-panel':
+                closePanel();
+                break;
+            case 'save-draft':
+                saveObservation(true);
+                break;
+            case 'save-observation':
+                saveObservation(false);
+                break;
+            case 'switch-tab':
+                if (tab) switchTab(tab);
+                break;
+            case 'delete-observation':
+                if (observationId) deleteObservation(observationId);
+                break;
         }
     });
 
