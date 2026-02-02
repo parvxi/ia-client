@@ -1,0 +1,205 @@
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Observation Update Request | Petrolube Internal Audit</title
+><!-- LOADING OVERLAY -->
+<div id="loadingScreen" class="loading-overlay" style="position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgba(255, 255, 255, 0.98); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; animation-duration: 0.3s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: fadeIn; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;">
+  <div class="loading-content" style="text-align: center;">
+    <div class="spinner-large" style="width: 64px; height: 64px; border-top-color: var(--primary-600); animation-duration: 1s; animation-timing-function: linear; animation-delay: 0s; animation-iteration-count: infinite; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: spin; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;"></div>
+    <p class="loading-text" style="font-size: 1rem; color: var(--neutral-600); font-weight: 500;">Loading observation details...</p>
+  </div>
+</div>
+<!-- MAIN CONTENT -->
+<div id="mainContent" class="main-container">
+  <!-- HEADER SECTION -->
+  <header class="page-header-modern" style="background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; margin-bottom: var(--spacing-xl); box-shadow: var(--shadow-lg); display: flex; justify-content: space-between; align-items: center;">
+    <div class="header-left" style="display: flex; align-items: center;">
+      <div class="company-logo" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--shadow-md);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: white;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <circle cx="12" cy="15" r="1"></circle>
+          <line x1="12" y1="12" x2="12" y2="13"></line>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 class="page-title" style="font-size: 1.75rem; font-weight: 700; color: var(--neutral-900); margin-bottom: var(--spacing-xs); letter-spacing: -0.025em;">Observation Update Request</h1>
+        <p class="page-subtitle" style="font-size: 0.9375rem; color: var(--neutral-500); font-weight: 500;">Internal Audit Department · Petrolube</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator" style="display: flex; align-items: center;"><span class="status-dot status-pending" style="width: 8px; height: 8px; animation-duration: 2s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: infinite; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: pulse; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;"></span><span class="status-text" style="font-size: 0.875rem; font-weight: 600; color: var(--warning-600);">Awaiting Response</span></div>
+    </div>
+  </header>
+  <!-- GREETING BANNER -->
+  <div class="greeting-banner" style="margin-bottom: var(--spacing-xl); display: flex; box-shadow: var(--shadow-sm);">
+    <div class="greeting-icon" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: white;">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+    <div class="greeting-content">
+      <h2 class="greeting-title" style="font-size: 1.25rem; font-weight: 600; color: var(--neutral-900); margin-bottom: var(--spacing-sm);">Dear <strong id="recipientName">Valued Partner</strong>,</h2>
+      <p class="greeting-text" style="font-size: 1rem; color: var(--neutral-700); line-height: 1.7;">Thank you for taking the time to provide an update. Please review the observation details below and submit your current status and revised action plan.</p>
+    </div>
+  </div>
+  <!-- OBSERVATION DETAILS CARD -->
+  <section class="card observation-card" style="background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; box-shadow: var(--shadow-lg); margin-bottom: var(--spacing-xl); overflow-x: hidden; overflow-y: hidden;">
+    <div class="card-header" style="display: flex; align-items: center;">
+      <div class="card-header-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: white;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 class="card-title" style="font-size: 1.25rem; font-weight: 700; color: var(--neutral-900); margin-bottom: var(--spacing-xs);">Observation Details</h3>
+        <p class="card-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Read-only information from the audit report</p>
+      </div>
+      <div id="riskBadge" class="card-badge" style="margin-left: auto; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;"></div>
+    </div>
+    <div class="card-body">
+      <div class="details-grid" style="display: grid; grid-template-columns: repeat(2, 1fr);">
+        <div class="detail-row full-width" style="display: flex; flex-direction: column; grid-column-start: 1; grid-column-end: -1;">
+          <div class="detail-label" style="font-size: 0.8125rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary-600);"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Observation
+          </div>
+          <div id="observation" class="detail-value highlight" style="line-height: 1.6; font-size: 1.125rem; font-weight: 600; color: var(--primary-800);">-</div>
+        </div>
+        <div class="detail-row half-width" style="display: flex; flex-direction: column; grid-column-start: span 1; grid-column-end: auto;">
+          <div class="detail-label" style="font-size: 0.8125rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">Audit Name</div>
+          <div id="auditName" class="detail-value" style="font-size: 1rem; color: var(--neutral-900); font-weight: 500; line-height: 1.6;">-</div>
+        </div>
+        <div class="detail-row half-width" style="display: flex; flex-direction: column; grid-column-start: span 1; grid-column-end: auto;">
+          <div class="detail-label" style="font-size: 0.8125rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">Audit Date</div>
+          <div id="auditDate" class="detail-value" style="font-size: 1rem; color: var(--neutral-900); font-weight: 500; line-height: 1.6;">-</div>
+        </div>
+        <div class="detail-row full-width" style="display: flex; flex-direction: column; grid-column-start: 1; grid-column-end: -1;">
+          <div class="detail-label" style="font-size: 0.8125rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">Detailed Description</div>
+          <div id="details" class="detail-value detail-box" style="color: var(--neutral-900); font-weight: 500; white-space-collapse: preserve; text-wrap-mode: wrap; word-break: break-word; font-size: 0.9375rem; line-height: 1.7;">-</div>
+        </div>
+        <div class="detail-row full-width" style="display: flex; flex-direction: column; grid-column-start: 1; grid-column-end: -1;">
+          <div class="detail-label" style="font-size: 0.8125rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">Original Management Response</div>
+          <div id="managementResponse" class="detail-value detail-box" style="color: var(--neutral-900); font-weight: 500; white-space-collapse: preserve; text-wrap-mode: wrap; word-break: break-word; font-size: 0.9375rem; line-height: 1.7;">-</div>
+        </div>
+        <div class="detail-row full-width" style="display: flex; flex-direction: column; grid-column-start: 1; grid-column-end: -1;">
+          <div class="detail-label" style="font-size: 0.8125rem; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center;">Original Due Date</div>
+          <div class="due-date-container" style="display: flex; align-items: center; flex-wrap: wrap;">
+            <div id="dueDate" class="detail-value" style="font-size: 1rem; color: var(--neutral-900); font-weight: 500; line-height: 1.6;">-</div>
+            <div id="overdueIndicator" class="overdue-tag" style="align-items: center; color: var(--danger-600); font-size: 0.875rem; font-weight: 700; animation-duration: 2s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: infinite; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: pulse; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal; display: none;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--danger-600);">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline></svg
+              ><span id="overdueText"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- UPDATE FORM CARD -->
+  <section class="card update-card" style="background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; box-shadow: var(--shadow-lg); margin-bottom: var(--spacing-xl); overflow-x: hidden; overflow-y: hidden;">
+    <div class="card-header" style="display: flex; align-items: center;">
+      <div class="card-header-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: white;">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="card-title" style="font-size: 1.25rem; font-weight: 700; color: var(--neutral-900); margin-bottom: var(--spacing-xs);">Your Update</h3>
+        <p class="card-subtitle" style="font-size: 0.875rem; color: var(--neutral-500);">Provide your current status and revised action plan</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <form id="clientUpdateForm" class="update-form" style="display: flex; flex-direction: column;">
+        <!-- REVISED MANAGEMENT RESPONSE -->
+        <div class="form-field" style="display: flex; flex-direction: column;">
+          <label for="revisedFeedback" class="field-label" style="display: flex; align-items: center; font-size: 0.9375rem; font-weight: 600; color: var(--neutral-900);"><span class="label-text" style="flex-grow: 1; flex-shrink: 1; flex-basis: 0%;">Revised Management Response</span><span class="required-indicator" style="color: var(--danger-500); font-weight: 700;">*</span></label>
+          <p class="field-help" style="font-size: 0.875rem; color: var(--neutral-600); line-height: 1.6;">Describe the current status, progress made, and any challenges encountered. Has the action been completed?</p>
+          <textarea id="revisedFeedback" name="revisedFeedback" rows="6" maxlength="2000" placeholder="Example: We have completed 80% of the action plan. The vendor approval system is now operational, and we are currently in the training phase..." required="" class="text-input" style="width: 100%; font-size: 1rem; font-family: inherit; color: var(--neutral-900); background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; resize: vertical; line-height: 1.6; min-height: 120px;"></textarea>
+          <div class="field-footer" style="display: flex; justify-content: flex-end;">
+            <span class="char-counter" style="font-size: 0.875rem; color: var(--neutral-500);"><span id="charCount">0</span> / 2,000 characters </span>
+          </div>
+        </div>
+        <!-- REVISED DUE DATE -->
+        <div class="form-field" style="display: flex; flex-direction: column;">
+          <label for="revisedDueDate" class="field-label" style="display: flex; align-items: center; font-size: 0.9375rem; font-weight: 600; color: var(--neutral-900);"><span class="label-text" style="flex-grow: 1; flex-shrink: 1; flex-basis: 0%;">Revised Due Date</span><span class="required-indicator" style="color: var(--danger-500); font-weight: 700;">*</span></label>
+          <p class="field-help" style="font-size: 0.875rem; color: var(--neutral-600); line-height: 1.6;">If you need an extension, provide a realistic new completion date.</p>
+          <input type="date" id="revisedDueDate" name="revisedDueDate" required="" class="date-input" style="width: 100%; font-size: 1rem; font-family: inherit; color: var(--neutral-900); background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white;" />
+        </div>
+        <!-- FILE UPLOAD -->
+        <div class="form-field" style="display: flex; flex-direction: column;">
+          <label class="field-label" style="display: flex; align-items: center; font-size: 0.9375rem; font-weight: 600; color: var(--neutral-900);"><span class="label-text" style="flex-grow: 1; flex-shrink: 1; flex-basis: 0%;">Supporting Documents</span><span class="optional-indicator" style="font-size: 0.875rem; font-weight: 400; color: var(--neutral-500);">(Optional)</span></label>
+          <p class="field-help" style="font-size: 0.875rem; color: var(--neutral-600); line-height: 1.6;">Upload any supporting documents (PDF, Word, Excel · Max 10MB per file)</p>
+          <div id="fileUploadArea" class="file-upload-area" style="text-align: center; cursor: pointer;">
+            <input type="file" id="fileInput" name="files" multiple="" accept=".pdf,.doc,.docx,.xls,.xlsx" style="display: none;" />
+            <div class="upload-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--neutral-400); margin-bottom: var(--spacing-md);">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p class="upload-text" style="font-size: 1rem; font-weight: 600; color: var(--neutral-700); margin-bottom: var(--spacing-xs);">Click to upload or drag and drop</p>
+              <p class="upload-subtext" style="font-size: 0.875rem; color: var(--neutral-500);">PDF, Word, Excel (Max 10MB)</p>
+            </div>
+          </div>
+          <div id="fileList" class="file-list" style="display: flex; flex-direction: column; margin-top: var(--spacing-md);"></div>
+        </div>
+        <!-- ADDITIONAL COMMENTS -->
+        <div class="form-field" style="display: flex; flex-direction: column;">
+          <label for="clientComments" class="field-label" style="display: flex; align-items: center; font-size: 0.9375rem; font-weight: 600; color: var(--neutral-900);"><span class="label-text" style="flex-grow: 1; flex-shrink: 1; flex-basis: 0%;">Additional Comments</span><span class="optional-indicator" style="font-size: 0.875rem; font-weight: 400; color: var(--neutral-500);">(Optional)</span></label>
+          <p class="field-help" style="font-size: 0.875rem; color: var(--neutral-600); line-height: 1.6;">Any additional context or information you'd like to share with the audit team.</p>
+          <textarea id="clientComments" name="clientComments" rows="4" maxlength="1000" placeholder="Optional: Add any relevant comments or explanations..." class="text-input" style="width: 100%; font-size: 1rem; font-family: inherit; color: var(--neutral-900); background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; resize: vertical; line-height: 1.6; min-height: 120px;"></textarea>
+          <div class="field-footer" style="display: flex; justify-content: flex-end;">
+            <span class="char-counter" style="font-size: 0.875rem; color: var(--neutral-500);"><span id="commentsCharCount">0</span> / 1,000 characters </span>
+          </div>
+        </div>
+        <!-- FORM ACTIONS -->
+        <div class="form-actions" style="display: flex; justify-content: flex-end; padding-top: var(--spacing-xl);">
+          <button type="button" id="cancelBtn" class="btn btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 600; border-top-width: initial; border-right-width: initial; border-bottom-width: initial; border-left-width: initial; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-top-color: initial; border-right-color: initial; border-bottom-color: initial; border-left-color: initial; border-image-source: initial; border-image-slice: initial; border-image-width: initial; border-image-outset: initial; border-image-repeat: initial; cursor: pointer; text-decoration-line: none; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; font-family: inherit; background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; color: var(--neutral-700);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Cancel</button
+          ><button type="submit" id="submitBtn" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 600; border-top-width: initial; border-right-width: initial; border-bottom-width: initial; border-left-width: initial; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-top-color: initial; border-right-color: initial; border-bottom-color: initial; border-left-color: initial; border-image-source: initial; border-image-slice: initial; border-image-width: initial; border-image-outset: initial; border-image-repeat: initial; cursor: pointer; text-decoration-line: none; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; font-family: inherit; color: white; box-shadow: var(--shadow-md);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Submit Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+<!-- SUCCESS MODAL -->
+<div id="successMessage" class="modal" style="position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 10000; animation-duration: 0.3s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: fadeIn; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal; display: none;">
+  <div class="modal-content success-modal" style="background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; max-width: 500px; width: 100%; box-shadow: var(--shadow-xl); text-align: center; animation-duration: 0.4s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: slideIn; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;">
+    <div class="success-animation" style="margin-bottom: var(--spacing-xl);">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" class="checkmark" style="width: 80px; height: 80px; border-top-left-radius: 50%; border-top-right-radius: 50%; border-bottom-right-radius: 50%; border-bottom-left-radius: 50%; display: block; stroke-width: 3; stroke: var(--success-500); stroke-miterlimit: 10; margin-top: 0px; margin-right: auto; margin-bottom: 0px; margin-left: auto; box-shadow: inset 0px 0px 0px var(--success-500); animation-duration: 0.4s, 0.3s; animation-timing-function: ease-in-out, ease-in-out; animation-delay: 0.4s, 0.9s; animation-iteration-count: 1, 1; animation-direction: normal, normal; animation-fill-mode: forwards, both; animation-play-state: running, running; animation-name: fill, scale; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;">
+        <circle cx="26" cy="26" r="25" fill="none" class="checkmark-circle" style="stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success-500); fill: var(--success-50); animation-duration: 0.6s; animation-timing-function: cubic-bezier(0.65, 0, 0.45, 1); animation-delay: 0s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: forwards; animation-play-state: running; animation-name: stroke; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;"></circle>
+        <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" class="checkmark-check" style="transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation-duration: 0.3s; animation-timing-function: cubic-bezier(0.65, 0, 0.45, 1); animation-delay: 0.8s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: forwards; animation-play-state: running; animation-name: stroke; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;"></path>
+      </svg>
+    </div>
+    <h2 class="success-title" style="font-size: 1.75rem; font-weight: 700; color: var(--neutral-900); margin-bottom: var(--spacing-md);">Update Submitted Successfully!</h2>
+    <p class="success-text" style="font-size: 1rem; color: var(--neutral-600); line-height: 1.7; margin-bottom: var(--spacing-2xl);">Thank you for your response. The Internal Audit team will review your update and get back to you shortly. You may now close this window.</p>
+  </div>
+</div>
+<!-- ERROR MODAL -->
+<div id="errorScreen" class="modal" style="position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 10000; animation-duration: 0.3s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: fadeIn; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal; display: none;">
+  <div class="modal-content error-modal" style="background-image: initial; background-position-x: initial; background-position-y: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: white; max-width: 500px; width: 100%; box-shadow: var(--shadow-xl); text-align: center; animation-duration: 0.4s; animation-timing-function: ease; animation-delay: 0s; animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: none; animation-play-state: running; animation-name: slideIn; animation-timeline: auto; animation-range-start: normal; animation-range-end: normal;">
+    <div class="error-icon-large" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--danger-500);">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+    </div>
+    <h2 class="error-title" style="font-size: 1.75rem; font-weight: 700; color: var(--neutral-900); margin-bottom: var(--spacing-md);">Unable to Load Observation</h2>
+    <p id="errorMessage" class="error-text" style="font-size: 1rem; color: var(--neutral-600); line-height: 1.7; margin-bottom: var(--spacing-2xl);">The requested observation could not be found. Please check your link or contact the Internal Audit team.</p>
+    <button onclick="window.close()" class="btn btn-secondary-large" style="border-top-width: initial; border-right-width: initial; border-bottom-width: initial; border-left-width: initial; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-top-color: initial; border-right-color: initial; border-bottom-color: initial; border-left-color: initial; border-image-source: initial; border-image-slice: initial; border-image-width: initial; border-image-outset: initial; border-image-repeat: initial; text-decoration-line: none; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; border: none; cursor: pointer; text-decoration: none; font-family: inherit; font-size: 1.125rem;">Close Window</button>
+  </div>
+</div>
+<div class="row sectionBlockLayout text-start" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
+  <div class="container" style="padding: 0px; display: flex; flex-wrap: wrap;"><div class="col-lg-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px;"></div></div>
+</div>
