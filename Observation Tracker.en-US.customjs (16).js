@@ -1041,20 +1041,27 @@ function renderCompleteFormFields(obs, mode, today, currentYear) {
 
                 <!-- Accept/Reject Actions (only show if observation is not already Closed) -->
                 ${obs.cr650_status !== 3 ? `
-                <div class="client-response-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: flex; gap: 12px;">
-                    <button type="button" class="btn btn-success btn-accept-response" data-action="accept-response" data-observation-id="${obs.cr650_ia_observationid}" style="background: #10B981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                        Accept & Close
-                    </button>
-                    <button type="button" class="btn btn-warning btn-reject-response" data-action="reject-response" data-observation-id="${obs.cr650_ia_observationid}" style="background: #F59E0B; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                            <path d="M3 3v5h5"/>
-                        </svg>
-                        Reject & Send Back
-                    </button>
+                <div class="client-response-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <p style="margin: 0 0 12px 0; font-size: 13px; color: #6B7280; font-weight: 500;">Review the client's response and take action:</p>
+                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                        <button type="button" class="btn btn-success btn-accept-response" data-action="accept-response" data-observation-id="${obs.cr650_ia_observationid}" style="background: #10B981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Accept & Close
+                        </button>
+                        <button type="button" class="btn btn-warning btn-reject-response" data-action="reject-response" data-observation-id="${obs.cr650_ia_observationid}" style="background: #F59E0B; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                            Reject & Send Back
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 24px; font-size: 12px; color: #9CA3AF;">
+                        <span><strong style="color: #10B981;">Accept:</strong> Closes observation permanently</span>
+                        <span><strong style="color: #F59E0B;">Reject:</strong> Sends back to client for revision</span>
+                    </div>
                 </div>
                 ` : `
                 <div style="margin-top: 20px; padding: 12px; background: #D1FAE5; border-radius: 8px; color: #065F46;">
@@ -1846,7 +1853,24 @@ function generateRiskSelector(selectedRisk) {
  * - Prompts for closing remarks
  */
 async function acceptClientResponse(observationId) {
-    const closingRemarks = prompt('Enter closing remarks for this observation:');
+    // First confirm the action with clear explanation
+    const confirmAccept = confirm(
+        '✅ ACCEPT CLIENT RESPONSE\n\n' +
+        'This will:\n' +
+        '• Close the observation (Status → Closed)\n' +
+        '• Set today as the closure date\n' +
+        '• Apply client\'s revised due date (if provided)\n' +
+        '• Save client\'s feedback to Latest Revised MAP\n\n' +
+        'The observation will no longer appear in active tracking.\n\n' +
+        'Do you want to proceed?'
+    );
+
+    if (!confirmAccept) return;
+
+    const closingRemarks = prompt(
+        'Enter your closing remarks:\n\n' +
+        '(Summarize how the observation was resolved)'
+    );
     if (closingRemarks === null) return; // User cancelled
 
     if (!closingRemarks.trim()) {
@@ -1887,7 +1911,13 @@ async function acceptClientResponse(observationId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        alert('Client response accepted. Observation has been closed.');
+        alert(
+            '✅ SUCCESS\n\n' +
+            'Observation has been CLOSED.\n\n' +
+            '• Status: Closed\n' +
+            '• Date Closed: Today\n' +
+            '• Closing Remarks: Saved'
+        );
         closePanel();
         await loadObservations();
 
@@ -1903,7 +1933,26 @@ async function acceptClientResponse(observationId) {
  * - Client must revise and resubmit
  */
 async function rejectClientResponse(observationId) {
-    const reason = prompt('Enter reason for rejection (this will be added to IA Work notes):');
+    // First confirm the action with clear explanation
+    const confirmReject = confirm(
+        '❌ REJECT CLIENT RESPONSE\n\n' +
+        'This will:\n' +
+        '• Keep observation status as "In Progress"\n' +
+        '• Add rejection reason to IA Work notes\n' +
+        '• Update last communication date\n\n' +
+        'The client will need to:\n' +
+        '• Review your feedback\n' +
+        '• Revise their response\n' +
+        '• Resubmit through the client portal\n\n' +
+        'Do you want to proceed?'
+    );
+
+    if (!confirmReject) return;
+
+    const reason = prompt(
+        'Enter reason for rejection:\n\n' +
+        '(This will be saved to IA Work notes for audit trail)'
+    );
     if (reason === null) return; // User cancelled
 
     if (!reason.trim()) {
@@ -1948,7 +1997,14 @@ async function rejectClientResponse(observationId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        alert('Client response rejected. The observation remains In Progress and the client will need to revise their submission.');
+        alert(
+            '❌ RESPONSE REJECTED\n\n' +
+            'Observation remains OPEN.\n\n' +
+            '• Status: In Progress\n' +
+            '• Rejection reason: Saved to IA Work notes\n' +
+            '• Last communication: Updated\n\n' +
+            'The client can access their portal to revise and resubmit.'
+        );
         closePanel();
         await loadObservations();
 
