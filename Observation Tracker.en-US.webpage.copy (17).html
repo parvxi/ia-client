@@ -1,0 +1,250 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Petrolube Internal Audit Observation Tracker - Professional Enterprise Dashboard" />
+<title>Observation Tracker | Petrolube Internal Audit</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<div class="app-container">
+  <main class="main-content">
+    <!-- PAGE HEADER - Premium -->
+    <div class="page-intro">
+      <div class="intro-content">
+        <div class="intro-text">
+          <h1 class="page-title">Master Observation Registry</h1>
+          <p class="page-description">
+            Enterprise-grade audit observation tracking with real-time remediation monitoring, 
+            compliance management, and accountability across all business units.
+          </p>
+        </div>
+        <div class="intro-actions">
+          <button id="dashboardBtn" class="btn btn-ghost" title="Navigate to Dashboard">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+              <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+              <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+              <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+            </svg>
+            <span>Dashboard</span>
+          </button>
+          <button id="exportBtn" class="btn btn-secondary" title="Export observations data">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" x2="12" y1="15" y2="3"></line>
+            </svg>
+            <span>Export</span>
+          </button>
+          <button id="addObservationBtn" class="btn btn-primary" title="Create new observation">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="M12 5v14"></path>
+            </svg>
+            <span>Add Observation</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATISTICS SECTION - Premium -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card stat-total">
+          <div class="stat-header">
+            <div class="stat-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+              </svg>
+            </div>
+            <span class="stat-label">Total Observations</span>
+          </div>
+          <div id="statTotal" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card stat-overdue">
+          <div class="stat-header">
+            <div class="stat-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 8v4"></path>
+                <path d="M12 16h.01"></path>
+              </svg>
+            </div>
+            <span class="stat-label">Overdue</span>
+          </div>
+          <div id="statOverdue" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card stat-progress">
+          <div class="stat-header">
+            <div class="stat-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <span class="stat-label">In Progress</span>
+          </div>
+          <div id="statProgress" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-card stat-closed">
+          <div class="stat-header">
+            <div class="stat-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <span class="stat-label">Closed</span>
+          </div>
+          <div id="statClosed" class="stat-value">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTERS & SEARCH - Premium -->
+    <div class="controls-section">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input type="search" id="searchInput" placeholder="Search observations, audits, departments, responsible persons..." autocomplete="off" class="search-input" />
+          <kbd class="search-shortcut">⌘K</kbd>
+        </div>
+      </div>
+
+      <div class="filters-container">
+        <div class="filter-group">
+          <label for="yearFilter" class="filter-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            Year
+          </label>
+          <select id="yearFilter" class="filter-select">
+            <option value="">All Years</option>
+            <option value="2026">2026</option>
+            <option value="2025" selected>2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="statusFilter" class="filter-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            Status
+          </label>
+          <select id="statusFilter" class="filter-select">
+            <option value="">All Status</option>
+            <option value="1">In Progress</option>
+            <option value="2">Overdue</option>
+            <option value="3">Closed</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="riskFilter" class="filter-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+              <path d="M12 9v4"></path>
+              <path d="M12 17h.01"></path>
+            </svg>
+            Risk Level
+          </label>
+          <select id="riskFilter" class="filter-select">
+            <option value="">All Risks</option>
+            <option value="1">Critical</option>
+            <option value="2">High</option>
+            <option value="3">Moderate</option>
+            <option value="4">Low</option>
+          </select>
+        </div>
+
+        <button id="clearFiltersBtn" class="btn btn-ghost" title="Clear all filters">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+          Clear
+        </button>
+      </div>
+    </div>
+
+    <!-- DATA TABLE - Premium -->
+    <div class="table-section">
+      <div class="table-wrapper">
+        <table class="observations-table">
+          <thead>
+            <tr>
+              <th class="col-period">Period</th>
+              <th class="col-audit">Audit Name</th>
+              <th class="col-observation">Observation</th>
+              <th class="col-risk">Risk Level</th>
+              <th class="col-status">Status</th>
+              <th class="col-responsible">Responsible</th>
+              <th class="col-due">Due Date</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="observationsTableBody">
+            <!-- Dynamic rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINATION - Premium -->
+      <div class="table-footer">
+        <div id="pageInfo" class="pagination-info">0-0 of 0</div>
+        <div class="pagination-controls">
+          <button id="prevBtn" disabled class="pagination-btn" title="Previous page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"></path>
+            </svg>
+            Previous
+          </button>
+          <button id="nextBtn" class="pagination-btn" title="Next page">
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- DETAIL PANEL OVERLAY - Premium -->
+<div id="panelOverlay" class="panel-overlay">
+  <div id="detailPanel" class="detail-panel">
+    <div id="panelContent" class="panel-content">
+      <!-- Content will be dynamically inserted -->
+    </div>
+  </div>
+</div>
+
+<!-- Power Pages Container -->
+<div class="row sectionBlockLayout text-start" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
+  <div class="container" style="padding: 0px; display: flex; flex-wrap: wrap;">
+    <div class="col-lg-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px;"></div>
+  </div>
+</div>
+
+
+<script>
+  document.getElementById('dashboardBtn').addEventListener('click', function () {
+    window.location.href = 'https://internal-audit-automation.powerappsportals.com/Observation-Tracker-Dashboard/';
+  });
+</script>
+
